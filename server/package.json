@@ -1,0 +1,8 @@
+{
+  "name": "bitcoin-custodian-wallet-server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "",
+  "author": "Lucas Araujo",
+  "license": "MIT"
+}
