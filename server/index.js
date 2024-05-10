@@ -1,8 +1,8 @@
-require("dotenv").config();
-const express = require("express");
-const cors = require("cors");
-const db = require("./src/models");
-const Client = require("bitcoin-core");
+import "dotenv/config";
+import express from "express";
+import cors from "cors";
+import Client from "bitcoin-core";
+
 const client = new Client({
   port: process.env.BITCOIN_PORT,
   host: process.env.BITCOIN_HOST,
@@ -26,6 +26,7 @@ db.sequelize
     console.error(error);
     console.error(JSON.stringify(error, null, 4));
   });
+
 client.command("listwalletdir").then(async ({ wallets }) => {
   const isCreated = wallets[0]?.name === process.env.WALLET_NAME;
   if (isCreated) {

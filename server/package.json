@@ -5,6 +5,7 @@
   "repository": "",
   "author": "Lucas Araujo",
   "license": "MIT",
+  "type": "module",
   "scripts": {
     "dev": "nodemon --signal SIGTERM index.js"
   },
