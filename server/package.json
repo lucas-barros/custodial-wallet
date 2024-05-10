@@ -6,7 +6,7 @@
   "author": "Lucas Araujo",
   "license": "MIT",
   "scripts": {
-    "dev": "nodemon index.js"
+    "dev": "nodemon --signal SIGTERM index.js"
   },
   "dependencies": {
     "bitcoin-core": "^4.2.0",

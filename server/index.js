@@ -26,20 +26,35 @@ db.sequelize
     console.error(error);
     console.error(JSON.stringify(error, null, 4));
   });
-
-client.command("loadwallet", "foobar").then((response) => {
-  console.log("Wallet:", response);
-
-  client
-    .getBalance("*", 0)
-    .then((help) => console.log(help))
-    .catch(console.log);
+client.command("listwalletdir").then(async ({ wallets }) => {
+  const isCreated = wallets[0]?.name === process.env.WALLET_NAME;
+  if (isCreated) {
+    await client.command("loadwallet", process.env.WALLET_NAME);
+    console.log("Wallet loaded!");
+  } else {
+    await client.command("createwallet", process.env.WALLET_NAME, true);
+    console.log("Wallet created!");
+  }
+  const balance = await client.getBalance("*", 0);
+  console.log(balance);
 });
 
 app.get("/", function (req, res) {
   res.json({ hello: "world" });
 });
 
-app.listen(PORT, function () {
+const server = app.listen(PORT, function () {
   console.log("Example app listening on port 8080!");
+});
+
+process.on("SIGTERM", async () => {
+  await client.command("unloadwallet", process.env.WALLET_NAME);
+  server.close((err) => {
+    if (err) {
+      console.error("server: closed with ERROR", err);
+      process.exit(81);
+    }
+    console.debug("server: closed");
+    process.exit();
+  });
 });
