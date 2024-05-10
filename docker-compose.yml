@@ -30,18 +30,18 @@ services:
       context: ./server
       dockerfile: ./Dockerfile
     volumes:
-      - ./server:/app
-      - /app/node_modules
+      - ./server:/home/node/app
+      - /home/node/app/node_modules
     ports:
       - ${SERVER_LOCAL_PORT}:${SERVER_PORT}
     develop:
       watch:
         - action: sync
           path: ./src
-          target: /app/src
+          target: /home/node/app/src
         - action: rebuild
           path: ./package.json
-          target: /app/package.json
+          target: /home/node/app/package.json
     environment:
       - DB_HOST=db
       - DB_USER=${DB_USER}
