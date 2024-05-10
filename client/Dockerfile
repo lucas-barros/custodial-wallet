@@ -7,7 +7,7 @@ COPY package-lock.json .
 
 RUN npm install
 
-COPY --chown=node:node . /app
+COPY --chown=node:node . .
 
 EXPOSE 8080
 

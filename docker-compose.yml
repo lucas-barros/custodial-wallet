@@ -1,5 +1,8 @@
 services:
   client:
+    networks:
+      - front-tier
+      - back-tier
     build:
       context: ./client
       dockerfile: ./Dockerfile
@@ -7,3 +10,88 @@ services:
       - ./client:/app
       - /app/node_modules
     ports: ["8080:8080"]
+    develop:
+      watch:
+        - action: sync
+          path: ./src
+          target: /app/src
+        - action: rebuild
+          path: ./package.json
+          target: /app/package.json
+  node:
+    networks:
+      - front-tier
+      - back-tier
+    depends_on:
+      - client
+      - db
+      - bitcoin-core
+    build:
+      context: ./server
+      dockerfile: ./Dockerfile
+    volumes:
+      - ./server:/app
+      - /app/node_modules
+    ports:
+      - ${SERVER_LOCAL_PORT}:${SERVER_PORT}
+    develop:
+      watch:
+        - action: sync
+          path: ./src
+          target: /app/src
+        - action: rebuild
+          path: ./package.json
+          target: /app/package.json
+    environment:
+      - DB_HOST=db
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - DB_PORT=${DB_PORT}
+      - BITCOIN_PORT=${BITCOIN_PORT}
+      - BITCOIN_USER=${BITCOIN_USER}
+      - BITCOIN_PASSWORD=${BITCOIN_PASSWORD}
+      - BITCOIN_HOST=bitcoin-core
+  db:
+    image: postgres
+    restart: always
+    networks:
+      - back-tier
+    user: postgres
+    volumes:
+      - db:/var/lib/postgres
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+    ports:
+      - ${DB_LOCAL_PORT}:${DB_PORT}
+    healthcheck:
+      test: ["CMD", "pg_isready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  bitcoin-core:
+    image: ruimarinho/bitcoin-core
+    ports:
+      - ${BITCOIN_PORT}:${BITCOIN_PORT}
+    networks:
+      - back-tier
+    command: 
+      -printtoconsole
+      -regtest=1
+      -rest
+      -rpcallowip=0.0.0.0/0
+      -rpcbind=0.0.0.0
+      -rpcport=${BITCOIN_PORT}
+      -rpcpassword=${BITCOIN_PASSWORD}
+      -rpcuser=${BITCOIN_USER}
+      -server
+
+networks:
+  front-tier:
+  back-tier:
+
+volumes:
+  db:
