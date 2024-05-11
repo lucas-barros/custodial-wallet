@@ -2,6 +2,19 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import Client from "bitcoin-core";
+import swaggerUi from "swagger-ui-express";
+import YAML from "yamljs";
+import { router as userRouter } from "./src/application/router/user.router.js";
+import { container } from "./src/domain/container.js";
+
+const swaggerDocument = YAML.load("./api-spec.yaml");
+const PORT = process.env.SERVER_PORT || 8080;
+const app = express();
+
+app.use(cors());
+app.use(express.json());
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.use("/users", userRouter(container));
 
 const client = new Client({
   port: process.env.BITCOIN_PORT,
@@ -10,12 +23,6 @@ const client = new Client({
   username: process.env.BITCOIN_USER,
   password: process.env.BITCOIN_PASSWORD,
 });
-
-const PORT = process.env.SERVER_PORT || 8080;
-const app = express();
-
-app.use(cors());
-app.use(express.json());
 
 client.command("listwalletdir").then(async ({ wallets }) => {
   const isCreated = wallets[0]?.name === process.env.WALLET_NAME;
@@ -28,10 +35,6 @@ client.command("listwalletdir").then(async ({ wallets }) => {
   }
   const balance = await client.getBalance("*", 0);
   console.log(balance);
-});
-
-app.get("/", function (req, res) {
-  res.json({ hello: "world" });
 });
 
 const server = app.listen(PORT, function () {

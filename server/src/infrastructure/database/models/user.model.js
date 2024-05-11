@@ -1,14 +1,7 @@
 import { DataTypes, Model } from "sequelize";
-import { sequelize } from "../sequelize";
+import sequelize from "../sequelize.js";
 
-export class SequelizeUser extends Model {
-  id;
-  email;
-  password;
-  name;
-  plaidAccessToken;
-  btcAddress;
-}
+export class SequelizeUser extends Model {}
 
 SequelizeUser.init(
   {

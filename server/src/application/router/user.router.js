@@ -1,0 +1,14 @@
+import express from "express";
+import { createUserController } from "../controllers/user.controller.js";
+
+export const router = (container) => {
+  const router = express.Router();
+
+  const userController = createUserController(container);
+
+  router.post("/", userController.create);
+
+  router.get("/:id", userController.getById);
+
+  return router;
+};

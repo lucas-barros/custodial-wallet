@@ -1,5 +1,5 @@
 import { Sequelize } from "sequelize";
-import { configByEnv } from "./config.cjs";
+import configByEnv from "./config.cjs";
 
 const { development: config } = configByEnv;
 
