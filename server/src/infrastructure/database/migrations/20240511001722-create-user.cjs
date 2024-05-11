@@ -15,6 +15,9 @@ module.exports = {
       password: {
         type: Sequelize.STRING,
       },
+      name: {
+        type: Sequelize.STRING,
+      },
       plaidAccessToken: {
         type: Sequelize.STRING,
       },

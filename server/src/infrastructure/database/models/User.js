@@ -5,6 +5,7 @@ export class SequelizeUser extends Model {
   id;
   email;
   password;
+  name;
   plaidAccessToken;
   btcAddress;
 }
@@ -17,6 +18,10 @@ SequelizeUser.init(
       autoIncrement: true,
     },
     email: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    name: {
       type: DataTypes.STRING,
       allowNull: false,
     },
