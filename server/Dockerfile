@@ -6,6 +6,8 @@ WORKDIR /home/node/app
 
 COPY --chown=node:node package*.json .
 
+COPY --chown=node:node --chmod=755 startup.sh .
+
 USER node
 
 RUN npm install
@@ -14,4 +16,4 @@ COPY --chown=node:node . .
 
 EXPOSE 8080
 
-CMD [ "npm", "run", "dev" ]
+ENTRYPOINT [ "bash","./startup.sh" ]

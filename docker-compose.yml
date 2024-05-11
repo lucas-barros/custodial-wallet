@@ -59,6 +59,8 @@ services:
     networks:
       - back-tier
     user: postgres
+    ports:
+      - ${DB_LOCAL_PORT}:${DB_PORT}
     volumes:
       - db:/var/lib/postgres
     environment:

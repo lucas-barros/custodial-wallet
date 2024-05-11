@@ -17,16 +17,6 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-db.sequelize
-  .authenticate()
-  .then(() => {
-    console.log("Connection has been established successfully.");
-  })
-  .catch((error) => {
-    console.error(error);
-    console.error(JSON.stringify(error, null, 4));
-  });
-
 client.command("listwalletdir").then(async ({ wallets }) => {
   const isCreated = wallets[0]?.name === process.env.WALLET_NAME;
   if (isCreated) {
