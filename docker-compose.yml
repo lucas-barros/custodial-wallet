@@ -47,13 +47,6 @@ services:
     env_file: .env
     environment:
       - DB_HOST=db
-      - DB_USER=${DB_USER}
-      - DB_PASSWORD=${DB_PASSWORD}
-      - DB_NAME=${DB_NAME}
-      - DB_PORT=${DB_PORT}
-      - BITCOIN_PORT=${BITCOIN_PORT}
-      - BITCOIN_USER=${BITCOIN_USER}
-      - BITCOIN_PASSWORD=${BITCOIN_PASSWORD}
       - BITCOIN_HOST=bitcoin-core
   db:
     image: postgres
