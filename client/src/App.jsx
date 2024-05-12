@@ -1,4 +1,17 @@
+import { RouterProvider } from "react-router-dom";
+import { router } from "./routes";
+import { useTheme } from "./providers/theme/hook";
 import "./App.css";
-import { AuthPage } from "./pages/AuthPage.jsx";
 
-export const App = () => <AuthPage />;
+export const App = () => {
+  const { isDarkMode } = useTheme();
+  return (
+    <main
+      className={`${
+        isDarkMode ? "dark" : "light"
+      } text-foreground bg-background h-full`}
+    >
+      <RouterProvider router={router} />
+    </main>
+  );
+};
