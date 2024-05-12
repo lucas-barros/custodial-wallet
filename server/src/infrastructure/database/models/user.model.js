@@ -27,6 +27,7 @@ SequelizeUser.init(
     },
     btcAddress: {
       type: DataTypes.STRING,
+      unique: true,
     },
   },
   {

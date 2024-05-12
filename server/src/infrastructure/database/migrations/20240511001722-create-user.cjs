@@ -23,6 +23,7 @@ module.exports = {
       },
       btcAddress: {
         type: Sequelize.STRING,
+        unique: true,
       },
       createdAt: {
         allowNull: false,
