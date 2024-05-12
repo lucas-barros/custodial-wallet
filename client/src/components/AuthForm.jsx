@@ -18,7 +18,6 @@ export const AuthForm = ({ status, onSignUp }) => {
   const [selected, setSelected] = React.useState("login");
   const isInvalid = status === "error";
   const isLoading = status === "loading";
-  console.log(status);
   return (
     <div className="flex flex-col items-center w-full">
       <Card className="max-w-full w-[340px]">
