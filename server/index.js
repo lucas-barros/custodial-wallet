@@ -1,48 +1,29 @@
 import "dotenv/config";
 import express from "express";
 import cors from "cors";
-import Client from "bitcoin-core";
 import swaggerUi from "swagger-ui-express";
 import YAML from "yamljs";
 import { router as userRouter } from "./src/application/router/user.router.js";
-import { container } from "./src/domain/container.js";
+import { createContainer } from "./container.js";
 
+const container = createContainer();
 const swaggerDocument = YAML.load("./api-spec.yaml");
 const PORT = process.env.SERVER_PORT || 8080;
 const app = express();
-
 app.use(cors());
 app.use(express.json());
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use("/users", userRouter(container));
 
-const client = new Client({
-  port: process.env.BITCOIN_PORT,
-  host: process.env.BITCOIN_HOST,
-  network: "regtest",
-  username: process.env.BITCOIN_USER,
-  password: process.env.BITCOIN_PASSWORD,
-});
-
-client.command("listwalletdir").then(async ({ wallets }) => {
-  const isCreated = wallets[0]?.name === process.env.WALLET_NAME;
-  if (isCreated) {
-    await client.command("loadwallet", process.env.WALLET_NAME);
-    console.log("Wallet loaded!");
-  } else {
-    await client.command("createwallet", process.env.WALLET_NAME, true);
-    console.log("Wallet created!");
-  }
-  const balance = await client.getBalance("*", 0);
-  console.log(balance);
-});
+container.bitcoinService.loadWallet();
 
 const server = app.listen(PORT, function () {
-  console.log("Example app listening on port 8080!");
+  console.log(`Example app listening on port ${PORT}!`);
 });
 
 process.on("SIGTERM", async () => {
-  await client.command("unloadwallet", process.env.WALLET_NAME);
+  await container.bitcoinService.unloadWallet();
+
   server.close((err) => {
     if (err) {
       console.error("server: closed with ERROR", err);
