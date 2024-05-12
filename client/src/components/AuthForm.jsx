@@ -15,7 +15,7 @@ export const AuthForm = ({ status, onSignUp }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
-  const [selected, setSelected] = React.useState("login");
+  const [selected, setSelected] = useState("login");
   const isInvalid = status === "error";
   const isLoading = status === "loading";
   return (
