@@ -5,6 +5,7 @@ import swaggerUi from "swagger-ui-express";
 import YAML from "yamljs";
 import { router as userRouter } from "./src/application/router/user.router.js";
 import { createContainer } from "./container.js";
+import { safeExit } from "./util.js";
 
 const container = createContainer();
 const swaggerDocument = YAML.load("./api-spec.yaml");
@@ -21,15 +22,10 @@ const server = app.listen(PORT, function () {
   console.log(`Example app listening on port ${PORT}!`);
 });
 
-process.on("SIGTERM", async () => {
-  await container.bitcoinService.unloadWallet();
+process.on("SIGTERM", () => {
+  safeExit(server, container.bitcoinService);
+});
 
-  server.close((err) => {
-    if (err) {
-      console.error("server: closed with ERROR", err);
-      process.exit(81);
-    }
-    console.debug("server: closed");
-    process.exit();
-  });
+process.on("uncaughtException", () => {
+  safeExit(server, container.bitcoinService);
 });
