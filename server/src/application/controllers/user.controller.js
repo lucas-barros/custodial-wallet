@@ -28,7 +28,39 @@ export const createUserController = ({
         return;
       }
 
-      res.status(201).send({ userId: userRepositoryResult.val.id });
+      res.status(201).send({
+        id: userRepositoryResult.val.id,
+        name: userEntityresult.val.getName(),
+        email: userEntityresult.val.getEmail(),
+        btcAddress: userEntityresult.val.getBtcAddress(),
+        isPlaidConnected: Boolean(userEntityresult.val.getPlaidAccessToken()),
+      });
+    },
+    signIn: async (req, res) => {
+      const { email, password } = req.body;
+      const userRepositoryResult = await userRepository.getByEmail(email);
+      if (!userRepositoryResult.ok) {
+        res.status(400).send(userRepositoryResult.err);
+        return;
+      }
+      const userEntityresult = UserEntity.create(userRepositoryResult.val);
+      const isValid = await hashService.compare(
+        password,
+        userEntityresult.val.getPassword()
+      );
+
+      if (!isValid) {
+        res.status(401).send();
+        return;
+      }
+
+      res.status(200).send({
+        id: userEntityresult.val.getUserId(),
+        name: userEntityresult.val.getName(),
+        email: userEntityresult.val.getEmail(),
+        btcAddress: userEntityresult.val.getBtcAddress(),
+        isPlaidConnected: Boolean(userEntityresult.val.getPlaidAccessToken()),
+      });
     },
     getById: async (req, res) => {
       const userId = req.params.id;

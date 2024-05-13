@@ -21,9 +21,19 @@ export class UserRepository {
       return createErr(DATABASE_ERROR);
     }
   }
+
   async getById(id) {
     try {
       const user = await this.userModel.findOne({ where: { id } });
+      return createOk(user.toJSON());
+    } catch {
+      return createErr(DATABASE_ERROR);
+    }
+  }
+
+  async getByEmail(email) {
+    try {
+      const user = await this.userModel.findOne({ where: { email } });
       return createOk(user.toJSON());
     } catch {
       return createErr(DATABASE_ERROR);

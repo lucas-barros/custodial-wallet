@@ -10,5 +10,7 @@ export const router = (container) => {
 
   router.get("/:id", userController.getById);
 
+  router.post("/sign-in", userController.signIn);
+
   return router;
 };

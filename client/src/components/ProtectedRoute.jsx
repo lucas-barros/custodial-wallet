@@ -2,9 +2,9 @@ import { Navigate } from "react-router-dom";
 import { useLoggedUser } from "../hooks/useLoggedUser";
 
 export const ProtectedRoute = ({ children }) => {
-  const userId = useLoggedUser();
+  const user = useLoggedUser();
 
-  if (!userId) {
+  if (!user?.id) {
     return <Navigate to="/" replace />;
   }
 

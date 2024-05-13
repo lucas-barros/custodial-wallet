@@ -8,18 +8,28 @@ export const AuthPage = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
-  const mutation = useMutation({
+  const signUpUserMutation = useMutation({
     mutationFn: (newUser) => serverApi.post("/users", newUser),
     onSuccess: (result) => {
-      queryClient.setQueryData(["userId"], () => result.data.userId);
+      queryClient.setQueryData(["user"], () => result.data);
       navigate(routes.dashboard);
     },
   });
+
+  const signInUserMutation = useMutation({
+    mutationFn: (credentials) => serverApi.post("/users/sign-in", credentials),
+    onSuccess: (result) => {
+      queryClient.setQueryData(["user"], () => result.data);
+      navigate(routes.dashboard);
+    },
+  });
+
   return (
     <div className="flex h-full items-center">
       <AuthForm
-        status={mutation.status}
-        onSignUp={(newUser) => mutation.mutate(newUser)}
+        status={signUpUserMutation.status}
+        onSignUp={(newUser) => signUpUserMutation.mutate(newUser)}
+        onSignIn={(credentials) => signInUserMutation.mutate(credentials)}
       />
     </div>
   );

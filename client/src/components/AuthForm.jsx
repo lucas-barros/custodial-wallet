@@ -11,7 +11,7 @@ import {
   Avatar,
 } from "@nextui-org/react";
 
-export const AuthForm = ({ status, onSignUp }) => {
+export const AuthForm = ({ status, onSignUp, onSignIn }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
@@ -36,7 +36,13 @@ export const AuthForm = ({ status, onSignUp }) => {
             onSelectionChange={setSelected}
           >
             <Tab key="login" title="Login">
-              <form className="flex flex-col gap-4">
+              <form
+                className="flex flex-col gap-4"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  onSignIn({ email, password });
+                }}
+              >
                 <Input
                   isRequired
                   label="Email"
@@ -63,7 +69,12 @@ export const AuthForm = ({ status, onSignUp }) => {
                   </Link>
                 </p>
                 <div className="flex gap-2 justify-end">
-                  <Button fullWidth color="primary" isLoading={isLoading}>
+                  <Button
+                    fullWidth
+                    color="primary"
+                    isLoading={isLoading}
+                    type="submit"
+                  >
                     Login
                   </Button>
                 </div>

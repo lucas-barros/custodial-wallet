@@ -47,6 +47,10 @@ export class UserEntity {
     return UserEntity.EMAIL_REGEX.test(email);
   }
 
+  getUserId() {
+    return this.id;
+  }
+
   getEmail() {
     return this.email;
   }
