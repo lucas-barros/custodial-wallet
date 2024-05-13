@@ -28,6 +28,7 @@ process.on("SIGTERM", () => {
   safeExit(server, container.bitcoinService);
 });
 
-process.on("uncaughtException", () => {
+process.on("uncaughtException", (error) => {
+  console.error(error);
   safeExit(server, container.bitcoinService);
 });
