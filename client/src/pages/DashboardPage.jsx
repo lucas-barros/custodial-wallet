@@ -6,12 +6,15 @@ import { useCallback } from "react";
 import { useLoggedUser } from "../hooks/useLoggedUser";
 import { useNavigate } from "react-router-dom";
 import { routes } from "../routes";
+import { useFiatBalance } from "../hooks/useFiatBalance";
+import { FiatBalance } from "../components/FiatBalance";
 
 export const DashboardPage = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
   const user = useLoggedUser();
+  const plaidBalanceQuery = useFiatBalance(user);
 
   const { data: linkToken } = useQuery({
     queryKey: ["linkToken"],
@@ -21,7 +24,6 @@ export const DashboardPage = () => {
       });
       return result.data.link_token;
     },
-    enabled: !user?.isPlaidConnected,
   });
 
   const onLinkSuccess = useCallback(
@@ -32,6 +34,7 @@ export const DashboardPage = () => {
       });
       if (result.data.success) {
         queryClient.invalidateQueries({ queryKey: ["user"] });
+        queryClient.invalidateQueries({ queryKey: ["fiatBalance"] });
       }
     },
     [user?.id, queryClient]
@@ -39,11 +42,7 @@ export const DashboardPage = () => {
 
   return (
     <div className="flex h-full">
-      <Sidebar
-        isPlaidConnected={user?.isPlaidConnected}
-        linkToken={linkToken}
-        onLinkSuccess={onLinkSuccess}
-      />
+      <Sidebar linkToken={linkToken} onLinkSuccess={onLinkSuccess} />
       <Navbar
         user={user}
         logout={() => {
@@ -52,8 +51,12 @@ export const DashboardPage = () => {
           navigate(routes.root);
         }}
       >
-        <div className="flex h-full w-full items-center">
-          This is the dashboard. Logged user: {user?.name}
+        <div className="flex flex-col h-full w-full p-3 gap-2">
+          <h3 className="text-xl font-semibold">Available Fiat Balance</h3>
+          <FiatBalance
+            accounts={plaidBalanceQuery.data}
+            status={plaidBalanceQuery.status}
+          />
         </div>
       </Navbar>
     </div>

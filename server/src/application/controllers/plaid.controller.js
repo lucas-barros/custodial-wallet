@@ -1,4 +1,8 @@
-export const createPlaidController = ({ plaidService, userRepository }) => {
+export const createPlaidController = ({
+  plaidService,
+  userRepository,
+  UserEntity,
+}) => {
   return {
     createLinkToken: async (req, res) => {
       const { userId } = req.body;
@@ -20,6 +24,23 @@ export const createPlaidController = ({ plaidService, userRepository }) => {
       }
 
       res.status(200).send({ success: true });
+    },
+    getBalance: async (req, res) => {
+      const { userId } = req.params;
+      const userRepositoryResult = await userRepository.getById(userId);
+
+      if (!userRepositoryResult.ok) {
+        res.status(400).send(userRepositoryResult.err);
+        return;
+      }
+
+      const { val: userEntity } = UserEntity.create(userRepositoryResult.val);
+
+      const balance = await plaidService.getBalance(
+        userEntity.getPlaidAccessToken()
+      );
+
+      res.status(200).send(balance);
     },
   };
 };

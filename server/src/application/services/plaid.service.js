@@ -18,14 +18,26 @@ export class PlaidService {
       ...this.config,
     };
 
-    const createTokenResponse = await this.client.linkTokenCreate(config);
-    return createTokenResponse.data;
+    const responce = await this.client.linkTokenCreate(config);
+    return responce.data;
   }
 
   async setAccessToken(publicToken) {
-    const tokenResponse = await this.client.itemPublicTokenExchange({
+    const responce = await this.client.itemPublicTokenExchange({
       public_token: publicToken,
     });
-    return tokenResponse.data.access_token;
+    return responce.data.access_token;
+  }
+
+  async getBalance(accessToken) {
+    const responce = await this.client.accountsBalanceGet({
+      access_token: accessToken,
+    });
+    return responce.data.accounts.map((account) => ({
+      id: account.account_id,
+      balance: account.balances.available,
+      currency: account.balances.iso_currency_code,
+      name: account.name,
+    }));
   }
 }
