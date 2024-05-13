@@ -23,9 +23,20 @@ export class UserRepository {
   }
   async getById(id) {
     try {
-      const user = await this.userModel.findOne({ id });
-      return createOk(user);
+      const user = await this.userModel.findOne({ where: { id } });
+      return createOk(user.toJSON());
     } catch {
+      return createErr(DATABASE_ERROR);
+    }
+  }
+
+  async setPlaidToken(id, accessToken) {
+    try {
+      const user = await this.userModel.findOne({ where: { id } });
+      user.plaidAccessToken = accessToken;
+      await user.save();
+      return createOk();
+    } catch (error) {
       return createErr(DATABASE_ERROR);
     }
   }

@@ -35,7 +35,7 @@ export const Navbar = ({ user, logout, children }) => {
                   as="button"
                   color="secondary"
                   size="md"
-                  name={user.name}
+                  name={user?.name}
                 />
               </DropdownTrigger>
             </NavbarItem>
@@ -48,7 +48,7 @@ export const Navbar = ({ user, logout, children }) => {
                 className="flex flex-col justify-start w-full items-start"
               >
                 <p>Signed in as</p>
-                <p>{user.email}</p>
+                <p>{user?.email}</p>
               </DropdownItem>
               <DropdownItem
                 key="logout"

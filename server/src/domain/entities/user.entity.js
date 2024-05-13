@@ -6,20 +6,23 @@ const MISSING_DATA = "Missing data";
 export class UserEntity {
   static EMAIL_REGEX = /^[a-z0-9.]+@[a-z0-9]+\.[a-z]+(\.[a-z]+)?$/i;
 
+  id;
   email;
   password;
   name;
   plaidAccessToken;
   btcAddress;
 
-  constructor({ email, password, name, btcAddress }) {
+  constructor({ id, email, password, name, btcAddress, plaidAccessToken }) {
+    this.id = id;
     this.email = email;
     this.password = password;
     this.name = name;
     this.btcAddress = btcAddress;
+    this.plaidAccessToken = plaidAccessToken;
   }
 
-  static async create({ email, password, name, btcAddress }) {
+  static create({ id, email, password, name, btcAddress, plaidAccessToken }) {
     const isValidEmail = UserEntity.validateEmail(email);
     if (!email || !password || !name || !btcAddress) {
       return createErr(MISSING_DATA);
@@ -29,10 +32,12 @@ export class UserEntity {
     }
 
     const user = new UserEntity({
+      id,
       email,
       password,
       name,
       btcAddress,
+      plaidAccessToken,
     });
 
     return createOk(user);

@@ -10,11 +10,8 @@ export const AuthPage = () => {
 
   const mutation = useMutation({
     mutationFn: (newUser) => serverApi.post("/users", newUser),
-    onSuccess: (result, variables) => {
-      queryClient.setQueryData("user", () => ({
-        id: result.data.userId,
-        ...variables,
-      }));
+    onSuccess: (result) => {
+      queryClient.setQueryData(["userId"], () => result.data.userId);
       navigate(routes.dashboard);
     },
   });

@@ -4,6 +4,7 @@ import cors from "cors";
 import swaggerUi from "swagger-ui-express";
 import YAML from "yamljs";
 import { router as userRouter } from "./src/application/router/user.router.js";
+import { router as plaidRouter } from "./src/application/router/plaid.router.js";
 import { createContainer } from "./container.js";
 import { safeExit } from "./util.js";
 
@@ -15,6 +16,7 @@ app.use(cors());
 app.use(express.json());
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use("/users", userRouter(container));
+app.use("/plaid", plaidRouter(container));
 
 container.bitcoinService.loadWallet();
 
