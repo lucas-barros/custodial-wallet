@@ -12,17 +12,35 @@ export class UserEntity {
   name;
   plaidAccessToken;
   btcAddress;
+  encryptedPrivateKey;
 
-  constructor({ id, email, password, name, btcAddress, plaidAccessToken }) {
+  constructor({
+    id,
+    email,
+    password,
+    name,
+    btcAddress,
+    plaidAccessToken,
+    encryptedPrivateKey,
+  }) {
     this.id = id;
     this.email = email;
     this.password = password;
     this.name = name;
     this.btcAddress = btcAddress;
     this.plaidAccessToken = plaidAccessToken;
+    this.encryptedPrivateKey = encryptedPrivateKey;
   }
 
-  static create({ id, email, password, name, btcAddress, plaidAccessToken }) {
+  static create({
+    id,
+    email,
+    password,
+    name,
+    btcAddress,
+    plaidAccessToken,
+    encryptedPrivateKey,
+  }) {
     const isValidEmail = UserEntity.validateEmail(email);
     if (!email || !password || !name || !btcAddress) {
       return createErr(MISSING_DATA);
@@ -38,6 +56,7 @@ export class UserEntity {
       name,
       btcAddress,
       plaidAccessToken,
+      encryptedPrivateKey,
     });
 
     return createOk(user);
@@ -69,5 +88,9 @@ export class UserEntity {
 
   getBtcAddress() {
     return this.btcAddress;
+  }
+
+  getEncryptedPrivateKey() {
+    return this.encryptedPrivateKey;
   }
 }

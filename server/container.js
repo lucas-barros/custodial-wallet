@@ -1,12 +1,12 @@
 import BitcoinClient from "bitcoin-core";
 import { Configuration, PlaidApi, PlaidEnvironments } from "plaid";
-import bcrypt from "bcrypt";
 import { UserEntity } from "./src/domain/entities/user.entity.js";
 import { UserRepository } from "./src/domain/repositories/user.repository.js";
 import { SequelizeUser } from "./src/infrastructure/database/models/user.model.js";
 import { BitcoinService } from "./src/application/services/bitcoin.service.js";
 import { PlaidService } from "./src/application/services/plaid.service.js";
 import { HashService } from "./src/application/services/hash.service.js";
+import { KeysService } from "./src/application/services/keys.service.js";
 
 export const createContainer = () => {
   const bitcoinClient = new BitcoinClient({
@@ -37,14 +37,16 @@ export const createContainer = () => {
   });
   const bitcoinService = new BitcoinService(
     bitcoinClient,
-    process.env.WALLET_NAME
+    process.env.BITCOIN_WALLET_NAME
   );
-  const hashService = new HashService(bcrypt);
+  const hashService = new HashService();
+  const keysService = new KeysService();
 
   return {
     bitcoinService,
     plaidService,
     hashService,
+    keysService,
     userRepository,
     UserEntity,
   };

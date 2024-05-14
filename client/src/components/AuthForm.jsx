@@ -11,13 +11,20 @@ import {
   Avatar,
 } from "@nextui-org/react";
 
-export const AuthForm = ({ status, onSignUp, onSignIn }) => {
+export const AuthForm = ({
+  signInStatus,
+  signUpStatus,
+  onSignUp,
+  onSignIn,
+}) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [selected, setSelected] = useState("login");
-  const isInvalid = status === "error";
-  const isLoading = status === "loading";
+
+  const signInError = signInStatus === "error";
+  const signUpError = signUpStatus === "error";
+
   return (
     <div className="flex flex-col items-center w-full">
       <Card className="max-w-full w-[340px]">
@@ -50,9 +57,9 @@ export const AuthForm = ({ status, onSignUp, onSignIn }) => {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  isInvalid={isInvalid}
-                  color={isInvalid && "danger"}
-                  errorMessage={isInvalid && "Please enter a valid email"}
+                  isInvalid={signInError}
+                  color={signInError && "danger"}
+                  errorMessage={signInError && "Please enter a valid email"}
                 />
                 <Input
                   isRequired
@@ -72,7 +79,7 @@ export const AuthForm = ({ status, onSignUp, onSignIn }) => {
                   <Button
                     fullWidth
                     color="primary"
-                    isLoading={isLoading}
+                    isLoading={signInStatus === "pending"}
                     type="submit"
                   >
                     Login
@@ -103,9 +110,9 @@ export const AuthForm = ({ status, onSignUp, onSignIn }) => {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  isInvalid={isInvalid}
-                  color={isInvalid && "danger"}
-                  errorMessage={isInvalid && "Please enter a valid email"}
+                  isInvalid={signUpError}
+                  color={signUpError && "danger"}
+                  errorMessage={signUpError && "Please enter a valid email"}
                 />
                 <Input
                   isRequired
@@ -125,7 +132,7 @@ export const AuthForm = ({ status, onSignUp, onSignIn }) => {
                   <Button
                     fullWidth
                     color="primary"
-                    isLoading={isLoading}
+                    isLoading={signUpStatus === "pending"}
                     type="submit"
                   >
                     Sign up

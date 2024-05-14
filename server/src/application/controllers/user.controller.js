@@ -1,19 +1,21 @@
 export const createUserController = ({
   UserEntity,
   userRepository,
-  bitcoinService,
   hashService,
+  keysService,
 }) => {
   return {
     create: async (req, res) => {
       const { email, password, name } = req.body;
-      const btcAddress = await bitcoinService.generateAddress();
+      const { publicAddress, encryptedPrivateKey } =
+        await keysService.createKeys();
       const hashedPassword = await hashService.hash(password);
       const userEntityresult = await UserEntity.create({
         email,
         password: hashedPassword,
         name,
-        btcAddress,
+        btcAddress: publicAddress,
+        encryptedPrivateKey,
       });
       if (!userEntityresult.ok) {
         res.status(400).send(userEntityresult.err);

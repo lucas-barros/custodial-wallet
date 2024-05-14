@@ -13,6 +13,7 @@ export class UserRepository {
         password: userEntity.getPassword(),
         name: userEntity.getName(),
         btcAddress: userEntity.getBtcAddress(),
+        encryptedPrivateKey: userEntity.getEncryptedPrivateKey(),
       });
       return createOk({
         id: created.id,

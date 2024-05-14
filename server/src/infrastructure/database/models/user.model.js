@@ -30,6 +30,10 @@ SequelizeUser.init(
       type: DataTypes.STRING,
       unique: true,
     },
+    encryptedPrivateKey: {
+      type: DataTypes.STRING,
+      unique: true,
+    },
   },
   {
     sequelize,

@@ -27,7 +27,8 @@ export const AuthPage = () => {
   return (
     <div className="flex h-full items-center">
       <AuthForm
-        status={signUpUserMutation.status}
+        signInStatus={signInUserMutation.status}
+        signUpStatus={signUpUserMutation.status}
         onSignUp={(newUser) => signUpUserMutation.mutate(newUser)}
         onSignIn={(credentials) => signInUserMutation.mutate(credentials)}
       />

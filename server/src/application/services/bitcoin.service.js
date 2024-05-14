@@ -20,10 +20,6 @@ export class BitcoinService {
   }
 
   unloadWallet() {
-    return this.client.command("unloadwallet", process.env.WALLET_NAME);
-  }
-
-  generateAddress() {
-    return this.client.command("getnewaddress");
+    return this.client.command("unloadwallet", this.walletName);
   }
 }
