@@ -7,7 +7,9 @@ import { useLoggedUser } from "../hooks/useLoggedUser";
 import { useNavigate } from "react-router-dom";
 import { routes } from "../routes";
 import { useFiatBalance } from "../hooks/useFiatBalance";
-import { FiatBalance } from "../components/FiatBalance";
+import { Balance } from "../components/Balance";
+import { useBtcAccount } from "../hooks/useBtcBalance";
+import { PlaidLinkButton } from "../components/PlaidLink";
 
 export const DashboardPage = () => {
   const queryClient = useQueryClient();
@@ -15,6 +17,7 @@ export const DashboardPage = () => {
 
   const user = useLoggedUser();
   const plaidBalanceQuery = useFiatBalance(user);
+  const btcAccountQuery = useBtcAccount(user);
 
   const { data: linkToken } = useQuery({
     queryKey: ["linkToken"],
@@ -51,12 +54,33 @@ export const DashboardPage = () => {
           navigate(routes.root);
         }}
       >
-        <div className="flex flex-col h-full w-full p-3 gap-2">
-          <h3 className="text-xl font-semibold">Available Fiat Balance</h3>
-          <FiatBalance
-            accounts={plaidBalanceQuery.data}
-            status={plaidBalanceQuery.status}
-          />
+        <div className="flex flex-col h-full w-full p-3 gap-4">
+          <div className="flex flex-col gap-2">
+            <h3 className="text-xl font-semibold">Available Fiat Balance</h3>
+            {user?.isPlaidConnected ? (
+              <Balance
+                accounts={plaidBalanceQuery.data}
+                status={plaidBalanceQuery.status}
+              />
+            ) : (
+              <div className="flex flex-row">
+                <PlaidLinkButton token={linkToken} onSuccess={onLinkSuccess} />
+              </div>
+            )}
+          </div>
+          <div className="flex flex-col gap-2">
+            <h3 className="text-xl font-semibold">Available BTC Balance</h3>
+            <Balance
+              accounts={[
+                {
+                  balance: btcAccountQuery.data?.balance,
+                  name: "Bitcoin account",
+                  currency: "BTC",
+                },
+              ]}
+              status={btcAccountQuery.status}
+            />
+          </div>
         </div>
       </Navbar>
     </div>
