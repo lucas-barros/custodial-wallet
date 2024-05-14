@@ -12,14 +12,13 @@
   },
   "dependencies": {
     "bcrypt": "^5.1.1",
-    "bip32-utils": "^0.11.1",
     "bip38": "^3.1.1",
-    "bip39": "^3.1.0",
     "bitcoin-core": "^4.2.0",
-    "bitcoinjs-lib": "^3.3.2",
+    "bitcoinjs-lib": "^6.1.5",
     "coinkey": "^3.0.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
+    "ecpair": "^2.1.0",
     "express": "^4.19.2",
     "hdkey": "^2.1.0",
     "option-t": "^43.0.1",
@@ -28,6 +27,7 @@
     "plaid": "^23.0.0",
     "sequelize": "^6.37.3",
     "swagger-ui-express": "^5.0.0",
+    "tiny-secp256k1": "^2.2.3",
     "yamljs": "^0.3.0"
   },
   "devDependencies": {

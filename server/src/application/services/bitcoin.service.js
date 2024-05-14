@@ -22,4 +22,11 @@ export class BitcoinService {
   unloadWallet() {
     return this.client.command("unloadwallet", this.walletName);
   }
+
+  async getExtBalance(extAddress) {
+    const balance = await this.client.command("scantxoutset", "start", [
+      `addr(${extAddress})`,
+    ]);
+    return balance.total_amount;
+  }
 }

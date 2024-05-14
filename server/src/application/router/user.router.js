@@ -7,9 +7,8 @@ export const router = (container) => {
   const userController = createUserController(container);
 
   router.post("/", userController.create);
-
+  router.get("/:id/btc", userController.getBtcAccount);
   router.get("/:id", userController.getById);
-
   router.post("/sign-in", userController.signIn);
 
   return router;

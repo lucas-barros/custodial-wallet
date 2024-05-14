@@ -1,24 +1,27 @@
-import bip39 from "bip39";
 import bip38 from "bip38";
-import HDKey from "hdkey";
 import bitcoin from "bitcoinjs-lib";
-import CoinKey from "coinkey";
+import * as ecc from "tiny-secp256k1";
+import { ECPairFactory } from "ecpair";
 
 export class KeysService {
+  ECPair;
+  constructor() {
+    this.ECPair = ECPairFactory(ecc);
+  }
   createKeys() {
-    const mnemonic = bip39.generateMnemonic();
-    const seed = bip39.mnemonicToSeedSync(mnemonic);
-    const hdkey = HDKey.fromMasterSeed(Buffer.from(seed, "hex"));
-    const child = hdkey.derive("m/44'/0'/0'/0/0");
-    const coinKey = new CoinKey(child.privateKey, bitcoin.networks.bitcoin);
+    const keyPair = this.ECPair.makeRandom();
+    const p2wpkh = bitcoin.payments.p2wpkh({
+      pubkey: keyPair.publicKey,
+      network: bitcoin.networks.regtest,
+    });
     const encryptedKey = bip38.encrypt(
-      coinKey.privateKey,
-      coinKey.compressed,
+      keyPair.privateKey,
+      keyPair.compressed,
       process.env.BITCOIN_ENCRYPTION_PASS
     );
 
     return {
-      publicAddress: coinKey.publicAddress,
+      publicAddress: p2wpkh.address,
       encryptedPrivateKey: encryptedKey,
     };
   }

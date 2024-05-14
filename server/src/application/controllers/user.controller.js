@@ -3,6 +3,7 @@ export const createUserController = ({
   userRepository,
   hashService,
   keysService,
+  bitcoinService,
 }) => {
   return {
     create: async (req, res) => {
@@ -78,6 +79,21 @@ export const createUserController = ({
         email: userEntityresult.val.getEmail(),
         btcAddress: userEntityresult.val.getBtcAddress(),
         isPlaidConnected: Boolean(userEntityresult.val.getPlaidAccessToken()),
+      });
+    },
+    getBtcAccount: async (req, res) => {
+      const userId = req.params.id;
+      const userRepositoryResult = await userRepository.getById(userId);
+      if (!userRepositoryResult.ok) {
+        res.status(400).send(userRepositoryResult.err);
+        return;
+      }
+      const userEntityresult = UserEntity.create(userRepositoryResult.val);
+      const btcAddress = userEntityresult.val.getBtcAddress();
+      const balance = await bitcoinService.getExtBalance(btcAddress);
+      res.status(200).send({
+        btcAddress,
+        balance,
       });
     },
   };
