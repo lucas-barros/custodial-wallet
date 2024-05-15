@@ -1,13 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import { serverApi } from "../api";
 
-export const useLinkToken = (user) => {
+export const useLinkToken = () => {
   const { data, status } = useQuery({
-    queryKey: ["linkToken"],
+    queryKey: ["link-token"],
     queryFn: async () => {
-      const result = await serverApi.post("/plaid/create-link-token", {
-        userId: user?.id,
-      });
+      const result = await serverApi.post("/plaid/create-link-token");
       return result.data.link_token;
     },
   });

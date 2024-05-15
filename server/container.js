@@ -8,6 +8,7 @@ import { PlaidService } from "./src/application/services/plaid.service.js";
 import { HashService } from "./src/application/services/hash.service.js";
 import { KeysService } from "./src/application/services/keys.service.js";
 import { ExchangeRateService } from "./src/application/services/exchage-rate.service.js";
+import { AuthTokenService } from "./src/application/services/auth-token.service.js";
 
 export const createContainer = () => {
   const bitcoinClient = new BitcoinClient({
@@ -45,6 +46,7 @@ export const createContainer = () => {
   const exchangeRateService = new ExchangeRateService(
     process.env.COIN_GECKO_API_KEY
   );
+  const authTokenService = new AuthTokenService(process.env.JWT_SECRET);
 
   return {
     bitcoinService,
@@ -52,6 +54,7 @@ export const createContainer = () => {
     hashService,
     keysService,
     exchangeRateService,
+    authTokenService,
     userRepository,
     UserEntity,
   };

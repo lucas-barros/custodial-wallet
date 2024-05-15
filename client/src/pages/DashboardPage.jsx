@@ -21,11 +21,10 @@ export const DashboardPage = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const user = useLoggedUser();
-  const fiatAccountQuery = useFiatAccount(user);
-  const btcAccountQuery = useBtcAccount(user);
-  const { buyBtc, buyBtcResponse, buyBtcError, status } = useBuyBtc(user);
-  const { data: linkToken } = useLinkToken(user);
-
+  const fiatAccountQuery = useFiatAccount(user?.isPlaidConnected);
+  const btcAccountQuery = useBtcAccount();
+  const { buyBtc, buyBtcResponse, buyBtcError, status } = useBuyBtc();
+  const { data: linkToken } = useLinkToken();
   const btcInUsdQuery = useBtcInUsd();
   const [fiatAccountId, setFiatAccountId] = useState();
   const [fiatAmount, setFiatAmount] = useState(0);
@@ -52,6 +51,7 @@ export const DashboardPage = () => {
         user={user}
         btcInUsdQuery={btcInUsdQuery}
         logout={() => {
+          localStorage.removeItem("token");
           queryClient.clear();
           queryClient.invalidateQueries({ queryKey: ["user"] });
           navigate(routes.root);

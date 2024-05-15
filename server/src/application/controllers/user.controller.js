@@ -6,6 +6,7 @@ export const createUserController = ({
   bitcoinService,
   exchangeRateService,
   plaidService,
+  authTokenService,
 }) => {
   return {
     create: async (req, res) => {
@@ -32,14 +33,11 @@ export const createUserController = ({
         res.status(400).send(userRepositoryResult.err);
         return;
       }
+      const userId = userRepositoryResult.val.id;
 
-      res.status(201).send({
-        id: userRepositoryResult.val.id,
-        name: userEntityresult.val.getName(),
-        email: userEntityresult.val.getEmail(),
-        btcAddress: userEntityresult.val.getBtcAddress(),
-        isPlaidConnected: Boolean(userEntityresult.val.getPlaidAccessToken()),
-      });
+      const { val: token } = authTokenService.sign({ userId });
+
+      res.status(201).send(token);
     },
     signIn: async (req, res) => {
       const { email, password } = req.body;
@@ -59,16 +57,13 @@ export const createUserController = ({
         return;
       }
 
-      res.status(200).send({
-        id: userEntityresult.val.getUserId(),
-        name: userEntityresult.val.getName(),
-        email: userEntityresult.val.getEmail(),
-        btcAddress: userEntityresult.val.getBtcAddress(),
-        isPlaidConnected: Boolean(userEntityresult.val.getPlaidAccessToken()),
-      });
+      const userId = userEntityresult.val.getUserId();
+      const { val: token } = authTokenService.sign({ userId });
+
+      res.status(200).send(token);
     },
     getById: async (req, res) => {
-      const userId = req.params.id;
+      const { userId } = req;
       const userRepositoryResult = await userRepository.getById(userId);
       if (!userRepositoryResult.ok) {
         res.status(400).send(userRepositoryResult.err);
@@ -84,7 +79,7 @@ export const createUserController = ({
       });
     },
     getBtcAccount: async (req, res) => {
-      const userId = req.params.id;
+      const { userId } = req;
       const userRepositoryResult = await userRepository.getById(userId);
       if (!userRepositoryResult.ok) {
         res.status(400).send(userRepositoryResult.err);
@@ -99,9 +94,9 @@ export const createUserController = ({
       });
     },
     buyBtc: async (req, res) => {
-      const { id } = req.params;
+      const { userId } = req;
       const { fiatAmount, fiatAccountId } = req.body;
-      const userRepositoryResult = await userRepository.getById(id);
+      const userRepositoryResult = await userRepository.getById(userId);
       if (!userRepositoryResult.ok) {
         res.status(400).send(userRepositoryResult.err);
         return;

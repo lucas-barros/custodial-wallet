@@ -18,7 +18,7 @@ export class UserRepository {
       return createOk({
         id: created.id,
       });
-    } catch (error) {
+    } catch {
       return createErr(DATABASE_ERROR);
     }
   }

@@ -1,10 +1,9 @@
 import { Navigate } from "react-router-dom";
-import { useLoggedUser } from "../hooks/useLoggedUser";
 
 export const ProtectedRoute = ({ children }) => {
-  const user = useLoggedUser();
+  const token = localStorage.getItem("token");
 
-  if (!user?.id) {
+  if (!token) {
     return <Navigate to="/" replace />;
   }
 

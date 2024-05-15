@@ -5,7 +5,7 @@ export const createPlaidController = ({
 }) => {
   return {
     createLinkToken: async (req, res) => {
-      const { userId } = req.body;
+      const { userId } = req;
 
       const { ok, val } = await plaidService.createLinkToken(userId);
 
@@ -16,10 +16,9 @@ export const createPlaidController = ({
       res.status(200).send(val);
     },
     setAccessToken: async (req, res) => {
-      const { userId, publicToken } = req.body;
-
+      const { userId } = req;
+      const { publicToken } = req.body;
       const accessToken = await plaidService.setAccessToken(publicToken);
-
       const result = await userRepository.setPlaidToken(userId, accessToken);
 
       if (!result.ok) {
@@ -30,7 +29,7 @@ export const createPlaidController = ({
       res.status(200).send({ success: true });
     },
     getAccounts: async (req, res) => {
-      const { userId } = req.params;
+      const { userId } = req;
       const userRepositoryResult = await userRepository.getById(userId);
 
       if (!userRepositoryResult.ok) {

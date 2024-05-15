@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { serverApi } from "../api";
 
-export const useBuyBtc = (user) => {
+export const useBuyBtc = () => {
   const queryClient = useQueryClient();
   const {
     mutate: buyBtc,
@@ -10,7 +10,7 @@ export const useBuyBtc = (user) => {
     status,
   } = useMutation({
     mutationFn: ({ fiatAmount, fiatAccountId }) =>
-      serverApi.post(`/users/${user?.id}/btc/buy`, {
+      serverApi.post(`/users/btc/buy`, {
         fiatAmount,
         fiatAccountId,
       }),
