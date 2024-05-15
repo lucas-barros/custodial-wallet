@@ -108,7 +108,7 @@ export const createUserController = ({
       }
       const userEntity = UserEntity.create(userRepositoryResult.val).val;
       const btcAddress = userEntity.getBtcAddress();
-      const btcInUsd = await exchangeRateService.btcInUsd();
+      const btcInUsd = await exchangeRateService.getBtcInUsd();
       const fiatAccounts = await plaidService.getAccounts(
         userEntity.getPlaidAccessToken()
       );

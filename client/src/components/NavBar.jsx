@@ -8,11 +8,12 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
+  Skeleton,
 } from "@nextui-org/react";
 import { Switch } from "@nextui-org/react";
 import { useTheme } from "../providers/theme/hook";
 
-export const Navbar = ({ user, logout, children }) => {
+export const Navbar = ({ user, logout, btcInUsdQuery, children }) => {
   const { isDarkMode, toggleTheme } = useTheme();
 
   return (
@@ -28,6 +29,17 @@ export const Navbar = ({ user, logout, children }) => {
           justify="end"
           className="w-fit data-[justify=end]:flex-grow-0"
         >
+          <div className="w-40">
+            {btcInUsdQuery.status === "pending" ? (
+              <Skeleton className="rounded-lg">
+                <div className="h-3 rounded-lg bg-default-200"></div>
+              </Skeleton>
+            ) : (
+              <span className="font-normal">
+                BTC - ${btcInUsdQuery.data} USD
+              </span>
+            )}
+          </div>
           <Dropdown>
             <NavbarItem>
               <DropdownTrigger>

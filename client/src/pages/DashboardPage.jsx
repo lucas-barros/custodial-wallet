@@ -15,6 +15,7 @@ import { useBuyBtc } from "../hooks/useBuyBtc";
 import { useLinkToken } from "../hooks/useLinkToken";
 import { FiatAccountSelect } from "../components/FiatAccountSelect";
 import { BuyBtcButton } from "../components/BuyBtcButton";
+import { useBtcInUsd } from "../hooks/useBtcInUsd";
 
 export const DashboardPage = () => {
   const queryClient = useQueryClient();
@@ -24,8 +25,10 @@ export const DashboardPage = () => {
   const btcAccountQuery = useBtcAccount(user);
   const { buyBtc, status } = useBuyBtc(user);
   const { data: linkToken } = useLinkToken(user);
+  const btcInUsdQuery = useBtcInUsd();
   const [fiatAccountId, setFiatAccountId] = useState();
-  const [fiatAmount, setFiatAmount] = useState();
+  const [fiatAmount, setFiatAmount] = useState(0);
+  const btcValue = btcInUsdQuery.data ? fiatAmount / btcInUsdQuery.data : 0;
 
   const onLinkSuccess = useCallback(
     async (public_token) => {
@@ -46,6 +49,7 @@ export const DashboardPage = () => {
       <Sidebar linkToken={linkToken} onLinkSuccess={onLinkSuccess} />
       <Navbar
         user={user}
+        btcInUsdQuery={btcInUsdQuery}
         logout={() => {
           queryClient.clear();
           queryClient.invalidateQueries({ queryKey: ["user"] });
@@ -82,10 +86,20 @@ export const DashboardPage = () => {
                 status={btcAccountQuery.status}
               />
               <div className="flex flex-col w-full gap-4">
-                <FiatAccountSelect
-                  accounts={fiatAccountQuery.data}
-                  onChange={setFiatAccountId}
-                />
+                <div className="flex flex-row w-full gap-4">
+                  <FiatAccountSelect
+                    accounts={fiatAccountQuery.data}
+                    onChange={setFiatAccountId}
+                  />
+                  <BuyBtcButton
+                    isEnabled={fiatAccountId}
+                    onClick={() => {
+                      buyBtc({ fiatAmount, fiatAccountId });
+                    }}
+                    isLoading={status === "pending"}
+                  />
+                </div>
+
                 <div className="flex flex-row w-full gap-4">
                   <Input
                     className="max-w-xs"
@@ -99,12 +113,12 @@ export const DashboardPage = () => {
                       )?.balance
                     }
                   />
-                  <BuyBtcButton
-                    isEnabled={fiatAccountId}
-                    onClick={() => {
-                      buyBtc({ fiatAmount, fiatAccountId });
-                    }}
-                    isLoading={status === "pending"}
+                  <Input
+                    disabled
+                    className="max-w-xs"
+                    value={btcValue.toFixed(8)}
+                    type="text"
+                    label="BTC"
                   />
                 </div>
               </div>

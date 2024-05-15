@@ -9,7 +9,12 @@ import {
 export const BuyBtcButton = ({ isEnabled, isLoading, onClick }) => {
   if (isEnabled) {
     return (
-      <Button color="primary" onClick={onClick} isLoading={isLoading}>
+      <Button
+        className="h-full"
+        color="primary"
+        onClick={onClick}
+        isLoading={isLoading}
+      >
         Buy BTC
       </Button>
     );
@@ -17,7 +22,7 @@ export const BuyBtcButton = ({ isEnabled, isLoading, onClick }) => {
   return (
     <Popover showArrow={true} color="foreground">
       <PopoverTrigger>
-        <Button color="default" isLoading={isLoading}>
+        <Button className="h-full" color="default" isLoading={isLoading}>
           Buy BTC
         </Button>
       </PopoverTrigger>
