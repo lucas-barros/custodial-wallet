@@ -74,7 +74,7 @@ export const DashboardPage = () => {
 
           <div className="flex flex-col gap-2">
             <h3 className="text-xl font-semibold">Available BTC Balance</h3>
-            <div className="flex flex-row gap-4">
+            <div className="flex flex-col sm:flex-row gap-4">
               <Balance
                 accounts={[
                   {
