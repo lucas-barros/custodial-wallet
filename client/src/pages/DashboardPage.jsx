@@ -108,6 +108,7 @@ export const DashboardPage = () => {
                     onChange={(e) => setFiatAmount(e.target.value)}
                     type="number"
                     label="Fiat"
+                    min={1}
                     max={
                       fiatAccountQuery.data.find(
                         (account) => account.id === fiatAccountId

@@ -121,7 +121,10 @@ export const createUserController = ({
         return;
       }
 
-      if (Number(fiatAccount.balance) < Number(fiatAmount)) {
+      if (
+        Number(fiatAccount.balance) < Number(fiatAmount) ||
+        Number(fiatAmount) === 0
+      ) {
         res.status(400).send({ error: "Not enough balance" });
         return;
       }
