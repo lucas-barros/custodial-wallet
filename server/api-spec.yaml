@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  title: Bitcoin custodian wwallet API
+  title: Bitcoin custodial wwallet API
   version: 1.0.0
 produces:
   - application/json

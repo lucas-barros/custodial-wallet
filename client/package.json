@@ -1,5 +1,5 @@
 {
-  "name": "bitcoin-custodian-wallet-client",
+  "name": "bitcoin-custodial-wallet-client",
   "version": "1.0.0",
   "main": "index.js",
   "repository": "",

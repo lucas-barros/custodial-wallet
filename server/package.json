@@ -1,5 +1,5 @@
 {
-  "name": "bitcoin-custodian-wallet-server",
+  "name": "bitcoin-custodial-wallet-server",
   "version": "1.0.0",
   "main": "index.js",
   "repository": "",
