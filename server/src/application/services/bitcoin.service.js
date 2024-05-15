@@ -12,9 +12,14 @@ export class BitcoinService {
       if (isCreated) {
         await this.client.command("loadwallet", this.walletName);
         console.log("Wallet loaded!");
+        const balance = await this.client.command("getbalance");
+        console.log("Wallet balance", balance);
       } else {
         await this.client.command("createwallet", this.walletName, false);
         console.log("Wallet created!");
+        await this.mineBlocks(101);
+        const balance = await this.client.command("getbalance");
+        console.log("Wallet balance", balance);
       }
     });
   }
