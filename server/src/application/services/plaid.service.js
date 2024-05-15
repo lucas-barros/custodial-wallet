@@ -24,7 +24,7 @@ export class PlaidService {
       const responce = await this.client.linkTokenCreate(config);
       return createOk(responce.data);
     } catch {
-      createErr();
+      return createErr("Plaid API error");
     }
   }
 
