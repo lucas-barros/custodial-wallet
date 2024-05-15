@@ -9,7 +9,7 @@ export const PlaidLinkButton = ({ token, onSuccess }) => {
   });
 
   return (
-    <Button onClick={() => open()} disabled={!ready}>
+    <Button color="primary" onClick={() => open()} disabled={!ready}>
       Link plaid account
     </Button>
   );
