@@ -1,5 +1,8 @@
 FROM node:20.1.0 
 
+ARG NODE_ENV=development
+ENV NODE_ENV=${NODE_ENV}
+
 WORKDIR /app
 
 COPY package.json .
@@ -11,4 +14,5 @@ COPY --chown=node:node . .
 
 EXPOSE 8080
 
-CMD ["npm","run","dev"]
+ENTRYPOINT [ "bash","./startup.sh" ]
+

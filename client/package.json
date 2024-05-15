@@ -7,9 +7,11 @@
   "license": "MIT",
   "scripts": {
     "dev": "vite",
+    "start:development": "npm run dev",
+    "start:production": "npm run preview",
     "build": "vite build",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "preview": "vite preview --port 8080"
   },
   "dependencies": {
     "@nextui-org/react": "^2.3.6",

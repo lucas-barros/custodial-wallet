@@ -12,6 +12,7 @@ services:
     ports: ["8080:8080"]
     environment:
       - VITE_SERVER_HOST=http://${SERVER_HOST}:${SERVER_LOCAL_PORT}
+      - NODE_ENV=${NODE_ENV}
     develop:
       watch:
         - action: sync
