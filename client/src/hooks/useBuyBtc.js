@@ -3,7 +3,12 @@ import { serverApi } from "../api";
 
 export const useBuyBtc = (user) => {
   const queryClient = useQueryClient();
-  const { mutate: buyBtc, status } = useMutation({
+  const {
+    mutate: buyBtc,
+    data: buyBtcResponse,
+    error,
+    status,
+  } = useMutation({
     mutationFn: ({ fiatAmount, fiatAccountId }) =>
       serverApi.post(`/users/${user?.id}/btc/buy`, {
         fiatAmount,
@@ -14,5 +19,10 @@ export const useBuyBtc = (user) => {
     },
   });
 
-  return { buyBtc, status };
+  return {
+    buyBtc,
+    buyBtcResponse,
+    buyBtcError: error?.response.data.error,
+    status,
+  };
 };

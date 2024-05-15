@@ -10,7 +10,7 @@ import { useFiatAccount } from "../hooks/useFiatAccount";
 import { Balance } from "../components/Balance";
 import { useBtcAccount } from "../hooks/useBtcAccount";
 import { PlaidLinkButton } from "../components/PlaidLink";
-import { Input } from "@nextui-org/react";
+import { Code, Input } from "@nextui-org/react";
 import { useBuyBtc } from "../hooks/useBuyBtc";
 import { useLinkToken } from "../hooks/useLinkToken";
 import { FiatAccountSelect } from "../components/FiatAccountSelect";
@@ -23,8 +23,9 @@ export const DashboardPage = () => {
   const user = useLoggedUser();
   const fiatAccountQuery = useFiatAccount(user);
   const btcAccountQuery = useBtcAccount(user);
-  const { buyBtc, status } = useBuyBtc(user);
+  const { buyBtc, buyBtcResponse, buyBtcError, status } = useBuyBtc(user);
   const { data: linkToken } = useLinkToken(user);
+
   const btcInUsdQuery = useBtcInUsd();
   const [fiatAccountId, setFiatAccountId] = useState();
   const [fiatAmount, setFiatAmount] = useState(0);
@@ -123,6 +124,10 @@ export const DashboardPage = () => {
                 </div>
               </div>
             </div>
+            {buyBtcError && <Code className="text-center">{buyBtcError}</Code>}
+            {buyBtcResponse && (
+              <Code className="text-center">Purchase Successful</Code>
+            )}
           </div>
         </div>
       </Navbar>
