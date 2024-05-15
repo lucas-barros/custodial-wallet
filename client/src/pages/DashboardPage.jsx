@@ -39,7 +39,7 @@ export const DashboardPage = () => {
       });
       if (result.data.success) {
         queryClient.invalidateQueries({ queryKey: ["user"] });
-        queryClient.invalidateQueries({ queryKey: ["fiat-balance"] });
+        queryClient.invalidateQueries({ queryKey: ["fiat-accounts"] });
       }
     },
     [user?.id, queryClient]
