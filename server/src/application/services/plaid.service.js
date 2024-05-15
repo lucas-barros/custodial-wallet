@@ -1,3 +1,5 @@
+import { createErr, createOk } from "option-t/PlainResult";
+
 export class PlaidService {
   client;
   config;
@@ -11,15 +13,19 @@ export class PlaidService {
   }
 
   async createLinkToken(userId) {
-    const config = {
-      user: {
-        client_user_id: String(userId),
-      },
-      ...this.config,
-    };
+    try {
+      const config = {
+        user: {
+          client_user_id: String(userId),
+        },
+        ...this.config,
+      };
 
-    const responce = await this.client.linkTokenCreate(config);
-    return responce.data;
+      const responce = await this.client.linkTokenCreate(config);
+      return createOk(responce.data);
+    } catch {
+      createErr();
+    }
   }
 
   async setAccessToken(publicToken) {

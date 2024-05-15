@@ -7,9 +7,13 @@ export const createPlaidController = ({
     createLinkToken: async (req, res) => {
       const { userId } = req.body;
 
-      const linkToken = await plaidService.createLinkToken(userId);
+      const { ok, val } = await plaidService.createLinkToken(userId);
 
-      res.status(200).send(linkToken);
+      if (!ok) {
+        res.status(400).send();
+        return;
+      }
+      res.status(200).send(val);
     },
     setAccessToken: async (req, res) => {
       const { userId, publicToken } = req.body;
