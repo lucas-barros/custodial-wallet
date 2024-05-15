@@ -82,6 +82,7 @@ services:
       -rpcpassword=${BITCOIN_PASSWORD}
       -rpcuser=${BITCOIN_USER}
       -server
+      -fallbackfee=0.00001
 
 networks:
   front-tier:

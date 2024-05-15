@@ -8,7 +8,7 @@ export const router = (container) => {
 
   router.post("/create-link-token", plaidController.createLinkToken);
   router.post("/set-access-token", plaidController.setAccessToken);
-  router.get("/balance/:userId", plaidController.getBalance);
+  router.get("/accounts/:userId", plaidController.getAccounts);
 
   return router;
 };

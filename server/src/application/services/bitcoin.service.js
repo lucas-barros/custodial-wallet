@@ -29,4 +29,19 @@ export class BitcoinService {
     ]);
     return balance.total_amount;
   }
+
+  async mineBlocks(blocks) {
+    const address = await this.client.command("getnewaddress");
+    return this.client.command("generatetoaddress", blocks, address);
+  }
+
+  async sendCoins(extAddress, amount) {
+    const result = await this.client.command(
+      "sendtoaddress",
+      extAddress,
+      amount
+    );
+    await this.mineBlocks(1);
+    return result;
+  }
 }

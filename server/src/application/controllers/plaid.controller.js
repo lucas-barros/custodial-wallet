@@ -25,7 +25,7 @@ export const createPlaidController = ({
 
       res.status(200).send({ success: true });
     },
-    getBalance: async (req, res) => {
+    getAccounts: async (req, res) => {
       const { userId } = req.params;
       const userRepositoryResult = await userRepository.getById(userId);
 
@@ -36,7 +36,7 @@ export const createPlaidController = ({
 
       const { val: userEntity } = UserEntity.create(userRepositoryResult.val);
 
-      const balance = await plaidService.getBalance(
+      const balance = await plaidService.getAccounts(
         userEntity.getPlaidAccessToken()
       );
 

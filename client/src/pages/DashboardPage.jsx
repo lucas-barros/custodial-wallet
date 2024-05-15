@@ -1,4 +1,4 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { Sidebar } from "../components/Sidebar";
 import { Navbar } from "../components/NavBar";
 import { serverApi } from "../api";
@@ -6,28 +6,22 @@ import { useCallback } from "react";
 import { useLoggedUser } from "../hooks/useLoggedUser";
 import { useNavigate } from "react-router-dom";
 import { routes } from "../routes";
-import { useFiatBalance } from "../hooks/useFiatBalance";
+import { useFiatAccount } from "../hooks/useFiatAccount";
 import { Balance } from "../components/Balance";
 import { useBtcAccount } from "../hooks/useBtcBalance";
 import { PlaidLinkButton } from "../components/PlaidLink";
+import { Button, Select, SelectItem } from "@nextui-org/react";
+import { useBuyBtc } from "../hooks/useBuyBtc";
+import { useLinkToken } from "../hooks/useLinkToken";
 
 export const DashboardPage = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-
   const user = useLoggedUser();
-  const plaidBalanceQuery = useFiatBalance(user);
+  const fiatAccountQuery = useFiatAccount(user);
   const btcAccountQuery = useBtcAccount(user);
-
-  const { data: linkToken } = useQuery({
-    queryKey: ["linkToken"],
-    queryFn: async () => {
-      const result = await serverApi.post("/plaid/create-link-token", {
-        userId: user?.id,
-      });
-      return result.data.link_token;
-    },
-  });
+  const { buyBtc, status } = useBuyBtc(user);
+  const { data: linkToken } = useLinkToken(user);
 
   const onLinkSuccess = useCallback(
     async (public_token) => {
@@ -37,7 +31,7 @@ export const DashboardPage = () => {
       });
       if (result.data.success) {
         queryClient.invalidateQueries({ queryKey: ["user"] });
-        queryClient.invalidateQueries({ queryKey: ["fiatBalance"] });
+        queryClient.invalidateQueries({ queryKey: ["fiat-balance"] });
       }
     },
     [user?.id, queryClient]
@@ -59,8 +53,8 @@ export const DashboardPage = () => {
             <h3 className="text-xl font-semibold">Available Fiat Balance</h3>
             {user?.isPlaidConnected ? (
               <Balance
-                accounts={plaidBalanceQuery.data}
-                status={plaidBalanceQuery.status}
+                accounts={fiatAccountQuery.data}
+                status={fiatAccountQuery.status}
               />
             ) : (
               <div className="flex flex-row">
@@ -68,18 +62,45 @@ export const DashboardPage = () => {
               </div>
             )}
           </div>
+
           <div className="flex flex-col gap-2">
             <h3 className="text-xl font-semibold">Available BTC Balance</h3>
-            <Balance
-              accounts={[
-                {
-                  balance: btcAccountQuery.data?.balance,
-                  name: "Bitcoin account",
-                  currency: "BTC",
-                },
-              ]}
-              status={btcAccountQuery.status}
-            />
+            <div className="flex flex-row gap-4">
+              <Balance
+                accounts={[
+                  {
+                    balance: btcAccountQuery.data?.balance,
+                    name: "Bitcoin account",
+                    currency: "BTC",
+                    id: "btc",
+                  },
+                ]}
+                status={btcAccountQuery.status}
+              />
+              <div className="flex flex-col w-full gap-4">
+                <Select
+                  isDisabled={!fiatAccountQuery.data}
+                  label="Select a fiat account"
+                  className="max-w-xs"
+                >
+                  {fiatAccountQuery.data?.map(({ id, name }) => (
+                    <SelectItem key={id} value={id}>
+                      {name}
+                    </SelectItem>
+                  ))}
+                </Select>
+                <div>
+                  <Button
+                    color={fiatAccountQuery.data ? "primary" : "default"}
+                    isDisabled={!fiatAccountQuery.data}
+                    onClick={() => buyBtc(0.5)}
+                    isLoading={status === "pending"}
+                  >
+                    Buy BTC
+                  </Button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </Navbar>

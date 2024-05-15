@@ -96,5 +96,19 @@ export const createUserController = ({
         balance,
       });
     },
+    buyBtc: async (req, res) => {
+      const { id } = req.params;
+      const { amount } = req.body;
+      const userRepositoryResult = await userRepository.getById(id);
+      if (!userRepositoryResult.ok) {
+        res.status(400).send(userRepositoryResult.err);
+        return;
+      }
+      const userEntityresult = UserEntity.create(userRepositoryResult.val);
+      const btcAddress = userEntityresult.val.getBtcAddress();
+      const result = await bitcoinService.sendCoins(btcAddress, amount);
+      console.log(result);
+      res.status(200).send({ success: true });
+    },
   };
 };

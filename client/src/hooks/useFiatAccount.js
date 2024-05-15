@@ -1,11 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import { serverApi } from "../api";
 
-export const useFiatBalance = (user) => {
+export const useFiatAccount = (user) => {
   const { data, status } = useQuery({
-    queryKey: ["fiat-balance"],
+    queryKey: ["fiat-accounts"],
     queryFn: async () => {
-      const result = await serverApi.get(`/plaid/balance/${user?.id}`);
+      const result = await serverApi.get(`/plaid/accounts/${user?.id}`);
       return result.data;
     },
     enabled: Boolean(user?.isPlaidConnected),

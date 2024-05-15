@@ -29,7 +29,7 @@ export class PlaidService {
     return responce.data.access_token;
   }
 
-  async getBalance(accessToken) {
+  async getAccounts(accessToken) {
     const responce = await this.client.accountsBalanceGet({
       access_token: accessToken,
     });
