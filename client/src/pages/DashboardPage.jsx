@@ -2,17 +2,19 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Sidebar } from "../components/Sidebar";
 import { Navbar } from "../components/NavBar";
 import { serverApi } from "../api";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { useLoggedUser } from "../hooks/useLoggedUser";
 import { useNavigate } from "react-router-dom";
 import { routes } from "../routes";
 import { useFiatAccount } from "../hooks/useFiatAccount";
 import { Balance } from "../components/Balance";
-import { useBtcAccount } from "../hooks/useBtcBalance";
+import { useBtcAccount } from "../hooks/useBtcAccount";
 import { PlaidLinkButton } from "../components/PlaidLink";
-import { Button, Select, SelectItem } from "@nextui-org/react";
+import { Input } from "@nextui-org/react";
 import { useBuyBtc } from "../hooks/useBuyBtc";
 import { useLinkToken } from "../hooks/useLinkToken";
+import { FiatAccountSelect } from "../components/FiatAccountSelect";
+import { BuyBtcButton } from "../components/BuyBtcButton";
 
 export const DashboardPage = () => {
   const queryClient = useQueryClient();
@@ -22,6 +24,8 @@ export const DashboardPage = () => {
   const btcAccountQuery = useBtcAccount(user);
   const { buyBtc, status } = useBuyBtc(user);
   const { data: linkToken } = useLinkToken(user);
+  const [fiatAccountId, setFiatAccountId] = useState();
+  const [fiatAmount, setFiatAmount] = useState();
 
   const onLinkSuccess = useCallback(
     async (public_token) => {
@@ -78,26 +82,30 @@ export const DashboardPage = () => {
                 status={btcAccountQuery.status}
               />
               <div className="flex flex-col w-full gap-4">
-                <Select
-                  isDisabled={!fiatAccountQuery.data}
-                  label="Select a fiat account"
-                  className="max-w-xs"
-                >
-                  {fiatAccountQuery.data?.map(({ id, name }) => (
-                    <SelectItem key={id} value={id}>
-                      {name}
-                    </SelectItem>
-                  ))}
-                </Select>
-                <div>
-                  <Button
-                    color={fiatAccountQuery.data ? "primary" : "default"}
-                    isDisabled={!fiatAccountQuery.data}
-                    onClick={() => buyBtc(0.5)}
+                <FiatAccountSelect
+                  accounts={fiatAccountQuery.data}
+                  onChange={setFiatAccountId}
+                />
+                <div className="flex flex-row w-full gap-4">
+                  <Input
+                    className="max-w-xs"
+                    value={fiatAmount}
+                    onChange={(e) => setFiatAmount(e.target.value)}
+                    type="number"
+                    label="Fiat"
+                    max={
+                      fiatAccountQuery.data.find(
+                        (account) => account.id === fiatAccountId
+                      )?.balance
+                    }
+                  />
+                  <BuyBtcButton
+                    isEnabled={fiatAccountId}
+                    onClick={() => {
+                      buyBtc({ fiatAmount, fiatAccountId });
+                    }}
                     isLoading={status === "pending"}
-                  >
-                    Buy BTC
-                  </Button>
+                  />
                 </div>
               </div>
             </div>

@@ -4,6 +4,8 @@ export const createUserController = ({
   hashService,
   keysService,
   bitcoinService,
+  exchangeRateService,
+  plaidService,
 }) => {
   return {
     create: async (req, res) => {
@@ -98,16 +100,39 @@ export const createUserController = ({
     },
     buyBtc: async (req, res) => {
       const { id } = req.params;
-      const { amount } = req.body;
+      const { fiatAmount, fiatAccountId } = req.body;
       const userRepositoryResult = await userRepository.getById(id);
       if (!userRepositoryResult.ok) {
         res.status(400).send(userRepositoryResult.err);
         return;
       }
-      const userEntityresult = UserEntity.create(userRepositoryResult.val);
-      const btcAddress = userEntityresult.val.getBtcAddress();
-      const result = await bitcoinService.sendCoins(btcAddress, amount);
-      console.log(result);
+      const userEntity = UserEntity.create(userRepositoryResult.val).val;
+      const btcAddress = userEntity.getBtcAddress();
+      const btcInUsd = await exchangeRateService.btcInUsd();
+      const fiatAccounts = await plaidService.getAccounts(
+        userEntity.getPlaidAccessToken()
+      );
+      const fiatAccount = fiatAccounts.find(
+        (fiatAccount) => fiatAccount.id === fiatAccountId
+      );
+
+      if (!fiatAccount) {
+        res.status(400).send({ error: "Fiat account does not exit" });
+        return;
+      }
+
+      if (!btcInUsd) {
+        res.status(400).send({ error: "Exhange rate not available" });
+        return;
+      }
+
+      if (Number(fiatAccount.balance) < Number(fiatAmount)) {
+        res.status(400).send({ error: "Not enough balance" });
+        return;
+      }
+
+      const btcAmount = Number(fiatAmount) / Number(btcInUsd);
+      await bitcoinService.sendCoins(btcAddress, btcAmount.toFixed(8));
       res.status(200).send({ success: true });
     },
   };

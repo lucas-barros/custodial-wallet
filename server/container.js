@@ -7,6 +7,7 @@ import { BitcoinService } from "./src/application/services/bitcoin.service.js";
 import { PlaidService } from "./src/application/services/plaid.service.js";
 import { HashService } from "./src/application/services/hash.service.js";
 import { KeysService } from "./src/application/services/keys.service.js";
+import { ExchangeRateService } from "./src/application/services/exchage-rate.service.js";
 
 export const createContainer = () => {
   const bitcoinClient = new BitcoinClient({
@@ -41,12 +42,16 @@ export const createContainer = () => {
   );
   const hashService = new HashService();
   const keysService = new KeysService();
+  const exchangeRateService = new ExchangeRateService(
+    process.env.COIN_GECKO_API_KEY
+  );
 
   return {
     bitcoinService,
     plaidService,
     hashService,
     keysService,
+    exchangeRateService,
     userRepository,
     UserEntity,
   };
