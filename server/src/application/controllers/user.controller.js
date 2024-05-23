@@ -1,5 +1,11 @@
+import { UserEntity } from "../../domain/entities/user.entity.js";
+import { BuyBtcUseCase } from "../use-cases/buy-btc.usecase.js";
+import { CreateUserUseCase } from "../use-cases/create-user.usecase.js";
+import { GetBtcAccountUseCase } from "../use-cases/get-btc-account.usecase.js";
+import { GetUserUseCase } from "../use-cases/get-user.usecase.js";
+import { SignInUseCase } from "../use-cases/sign-in.usecase.js";
+
 export const createUserController = ({
-  UserEntity,
   userRepository,
   hashService,
   keysService,
@@ -11,127 +17,96 @@ export const createUserController = ({
   return {
     create: async (req, res) => {
       const { email, password, name } = req.body;
-      const { publicAddress, encryptedPrivateKey } =
-        await keysService.createKeys();
-      const hashedPassword = await hashService.hash(password);
-      const userEntityresult = await UserEntity.create({
-        email,
-        password: hashedPassword,
-        name,
-        btcAddress: publicAddress,
-        encryptedPrivateKey,
+
+      const createUserUseCase = new CreateUserUseCase({
+        hashService,
+        keysService,
+        userRepository,
+        authTokenService,
       });
-      if (!userEntityresult.ok) {
-        res.status(400).send(userEntityresult.err);
+
+      const result = await createUserUseCase.execute({ email, password, name });
+
+      if (result.err) {
+        res.status(400).send(result.err);
         return;
       }
 
-      const userRepositoryResult = await userRepository.create(
-        userEntityresult.val
-      );
-      if (!userRepositoryResult.ok) {
-        res.status(400).send(userRepositoryResult.err);
-        return;
-      }
-      const userId = userRepositoryResult.val.id;
-
-      const { val: token } = authTokenService.sign({ userId });
-
-      res.status(201).send(token);
+      res.status(201).send(result.val);
     },
     signIn: async (req, res) => {
       const { email, password } = req.body;
-      const userRepositoryResult = await userRepository.getByEmail(email);
-      if (!userRepositoryResult.ok) {
-        res.status(400).send(userRepositoryResult.err);
+
+      const signInUseCase = new SignInUseCase({
+        hashService,
+        userRepository,
+        authTokenService,
+      });
+
+      const result = await signInUseCase.execute({ email, password });
+
+      if (result.err) {
+        res.status(400).send(result.err);
         return;
       }
-      const userEntityresult = UserEntity.create(userRepositoryResult.val);
-      const isValid = await hashService.compare(
-        password,
-        userEntityresult.val.getPassword()
-      );
 
-      if (!isValid) {
-        res.status(401).send();
-        return;
-      }
-
-      const userId = userEntityresult.val.getUserId();
-      const { val: token } = authTokenService.sign({ userId });
-
-      res.status(200).send(token);
+      res.status(200).send(result.val);
     },
     getById: async (req, res) => {
       const { userId } = req;
-      const userRepositoryResult = await userRepository.getById(userId);
-      if (!userRepositoryResult.ok) {
-        res.status(400).send(userRepositoryResult.err);
+
+      const getUserUseCase = new GetUserUseCase({
+        userRepository,
+      });
+
+      const result = await getUserUseCase.execute(userId);
+
+      if (result.err) {
+        res.status(400).send(result.err);
         return;
       }
-      const userEntityresult = UserEntity.create(userRepositoryResult.val);
-      res.status(200).send({
-        id: userId,
-        name: userEntityresult.val.getName(),
-        email: userEntityresult.val.getEmail(),
-        btcAddress: userEntityresult.val.getBtcAddress(),
-        isPlaidConnected: Boolean(userEntityresult.val.getPlaidAccessToken()),
-      });
+
+      res.status(200).send(result.val);
     },
     getBtcAccount: async (req, res) => {
       const { userId } = req;
-      const userRepositoryResult = await userRepository.getById(userId);
-      if (!userRepositoryResult.ok) {
-        res.status(400).send(userRepositoryResult.err);
+
+      const getBtcAccountUseCase = new GetBtcAccountUseCase({
+        userRepository,
+        bitcoinService,
+      });
+
+      const result = await getBtcAccountUseCase.execute(userId);
+
+      if (result.err) {
+        res.status(400).send(result.err);
         return;
       }
-      const userEntityresult = UserEntity.create(userRepositoryResult.val);
-      const btcAddress = userEntityresult.val.getBtcAddress();
-      const balance = await bitcoinService.getExtBalance(btcAddress);
-      res.status(200).send({
-        btcAddress,
-        balance,
-      });
+
+      res.status(200).send(result.val);
     },
     buyBtc: async (req, res) => {
       const { userId } = req;
       const { fiatAmount, fiatAccountId } = req.body;
-      const userRepositoryResult = await userRepository.getById(userId);
-      if (!userRepositoryResult.ok) {
-        res.status(400).send(userRepositoryResult.err);
-        return;
-      }
-      const userEntity = UserEntity.create(userRepositoryResult.val).val;
-      const btcAddress = userEntity.getBtcAddress();
-      const btcInUsd = await exchangeRateService.getBtcInUsd();
-      const fiatAccounts = await plaidService.getAccounts(
-        userEntity.getPlaidAccessToken()
-      );
-      const fiatAccount = fiatAccounts.find(
-        (fiatAccount) => fiatAccount.id === fiatAccountId
-      );
+      const buyBtcUseCase = new BuyBtcUseCase({
+        userRepository,
+        bitcoinService,
+        exchangeRateService,
+        plaidService,
+      });
 
-      if (!fiatAccount) {
-        res.status(400).send({ error: "Fiat account does not exit" });
-        return;
-      }
+      const result = await buyBtcUseCase.execute({
+        userId,
+        fiatAmount,
+        fiatAccountId,
+      });
 
-      if (!btcInUsd) {
-        res.status(400).send({ error: "Exhange rate not available" });
+      if (result.err) {
+        res.status(400).send(result.err);
         return;
       }
 
-      if (
-        Number(fiatAccount.balance) < Number(fiatAmount) ||
-        Number(fiatAmount) === 0
-      ) {
-        res.status(400).send({ error: "Not enough balance" });
-        return;
-      }
-
-      const btcAmount = Number(fiatAmount) / Number(btcInUsd);
-      await bitcoinService.sendCoins(btcAddress, btcAmount.toFixed(8));
-      res.status(200).send({ success: true });
+      res.status(200).send(result.val);
     },
   };
 };
