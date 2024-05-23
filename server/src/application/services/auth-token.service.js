@@ -12,7 +12,7 @@ export class AuthTokenService {
       return createOk(decode);
     } catch (error) {
       console.log(error);
-      createErr("Invalid token");
+      return createErr("Invalid token");
     }
   }
 
