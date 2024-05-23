@@ -25,7 +25,7 @@ export class AuthTokenService {
       return createOk(token);
     } catch (error) {
       console.log(error);
-      createErr("Failed to sign");
+      return createErr("Failed to sign");
     }
   }
 }
