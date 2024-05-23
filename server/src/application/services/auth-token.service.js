@@ -3,8 +3,8 @@ import { createErr, createOk } from "option-t/PlainResult";
 
 export class AuthTokenService {
   secret;
-  constructor() {
-    this.secret = process.env.JWT_SECRET;
+  constructor(secret) {
+    this.secret = secret;
   }
   verify(token) {
     try {
