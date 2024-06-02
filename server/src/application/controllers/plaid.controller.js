@@ -1,7 +1,8 @@
+import { UserEntity } from "../../domain/entities/user.entity.js";
+
 export const createPlaidController = ({
   plaidService,
   userRepository,
-  UserEntity,
 }) => {
   return {
     createLinkToken: async (req, res) => {

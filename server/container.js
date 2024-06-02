@@ -1,6 +1,5 @@
 import BitcoinClient from "bitcoin-core";
 import { Configuration, PlaidApi, PlaidEnvironments } from "plaid";
-import { UserEntity } from "./src/domain/entities/user.entity.js";
 import { UserRepository } from "./src/domain/repositories/user.repository.js";
 import { SequelizeUser } from "./src/infrastructure/database/models/user.model.js";
 import { BitcoinService } from "./src/application/services/bitcoin.service.js";
@@ -56,6 +55,5 @@ export const createContainer = () => {
     exchangeRateService,
     authTokenService,
     userRepository,
-    UserEntity,
   };
 };
