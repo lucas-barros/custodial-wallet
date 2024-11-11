@@ -21,25 +21,25 @@ export class PlaidService {
         ...this.config,
       };
 
-      const responce = await this.client.linkTokenCreate(config);
-      return createOk(responce.data);
+      const response = await this.client.linkTokenCreate(config);
+      return createOk(response.data);
     } catch {
       return createErr("Plaid API error");
     }
   }
 
   async setAccessToken(publicToken) {
-    const responce = await this.client.itemPublicTokenExchange({
+    const response = await this.client.itemPublicTokenExchange({
       public_token: publicToken,
     });
-    return responce.data.access_token;
+    return response.data.access_token;
   }
 
   async getAccounts(accessToken) {
-    const responce = await this.client.accountsBalanceGet({
+    const response = await this.client.accountsBalanceGet({
       access_token: accessToken,
     });
-    return responce.data.accounts.map((account) => ({
+    return response.data.accounts.map((account) => ({
       id: account.account_id,
       balance: account.balances.available,
       currency: account.balances.iso_currency_code,
