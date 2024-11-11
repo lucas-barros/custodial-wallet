@@ -1,6 +1,6 @@
 # Bitcoin custodial wallet
 
-The purpose of this project is to create a small custodial wallet app that demos an end-to-end purchase of bitcoin with fiat.
+This project aims to develop a compact custodial wallet app that demonstrates an end-to-end Bitcoin purchase using fiat currency, integrating with Plaid for bank connectivity.
 
 ## Application breakdown
 The client application is built with react, vite and next-ui, a component library that builds on top of Tailwind CSS. 
